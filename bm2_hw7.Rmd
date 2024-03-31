@@ -1,0 +1,42 @@
+---
+title: "bm2_hw7"
+author: "Yixiao Sun"
+date: "2024-03-31"
+output: pdf_document
+---
+```{r}
+set.seed(1)
+library(lme4)
+rm(list = ls())
+data <- read.csv('~/Desktop/P8130_Biostatistical Method/bw2_hw7/HW7-politeness_data.csv')
+summary(data)
+boxplot(frequency ~ attitude*gender, col=c("white","lightgray"),data= data)
+```
+
+```{r}
+m1 <- lmer(frequency ~ gender + attitude + (1|subject), REML = TRUE, data = data)
+summary(m1)
+summary(ranef(m1)$subject)
+ranef(m1)
+residuals(m1)
+
+```
+
+```{r}
+m2 <- lmer(frequency ~ gender + attitude + gender*attitude+ (1|subject),
+REML = F, data = data)
+summary(m2)
+ranef(m2)
+TS1 <- deviance(m1) - deviance(m2)
+p1 <- 1-pchisq(TS1, 1)
+```
+
+```{r}
+m3 <- lmer(frequency ~ gender + attitude + (1+attitude|subject), data = data)
+summary(m3)
+ranef(m3)
+m4 <- lmer(frequency ~ gender + attitude + (1|subject)+(1|scenario), data = data)
+summary(m4)
+ranef(m4)
+```
+
